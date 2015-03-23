@@ -1,8 +1,10 @@
+#Minor 6
+
 In this assignment you'll be using Linux sockets (two-way communication devices between processes running on a single computer). You will submit ONE solution to this problem for your entire group.
 
 Start by going through the tutorial found here. Along with some discussion it includes code for a client server appllication using sockets. Hey, sounds like you're all done, right? Well, not quite.
 
-So, here's the application that I want you to complete. First off we'll have one server but TWO clients. The server will maintain a "database" of 10 tickets to something, a airplane seat, a conference, a public hanging, it doesn't matter. Each ticket will have a 5-digit (randomly generated) ticket number. After all, we don't want forged tickets at our hanging. So that's simple enuff. The server will maintain an array of 10 5-digit integers.
+So, here's the application that I want you to complete. First off we'll have one server but TWO clients. The server will maintain a "database" of 10 tickets to something, a airplane seat, a conarference, a public hanging, it doesn't matter. Each ticket will have a 5-digit (randomly generated) ticket number. After all, we don't want forged tickets at our hanging. So that's simple enuff. The server will maintain an array of 10 5-digit integers.
 
 Each client will make requests that the server will attempt to satisfy. Here are the types of requests:
 
