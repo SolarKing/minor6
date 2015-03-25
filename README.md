@@ -1,5 +1,12 @@
 #Minor 6
 
+##Resources
+1. [C Socket Programming](http://www.thegeekstuff.com/2011/12/c-socket-programming/)
+2. [SO: Connection Refused error](http://stackoverflow.com/questions/11497716/c-sockets-connection-refused-error)
+3. [VIDEO (15 min): UDP Programming in C](https://www.youtube.com/watch?v=Emuw71lozdA)
+4. [VIDEO (9 min): TCP/IP Socket in C Language](https://www.youtube.com/watch?v=oP-n5tLUPVQ)
+
+##Assignment
 In this assignment you'll be using Linux sockets (two-way communication devices between processes running on a single computer). You will submit ONE solution to this problem for your entire group.
 
 Start by going through the tutorial found here. Along with some discussion it includes code for a client server appllication using sockets. Hey, sounds like you're all done, right? Well, not quite.
@@ -18,7 +25,7 @@ So my STRONG suggestion is that you modify the server and single client software
 
 To add some fun each client should probabilistically (using a random number generator)  BUY 90% of the time and CANCEL 10%.  If you don't know how to do this, contact me.  Its simple using "random()".   And to make things fun each client should make 7 requests of the server, which means our "show" will likely be a full house.
 
-#Submission
+##Submission
 **This IS important.** Follow these directions or you're likely to get a zero for this assignment. You can submit up to 20 files, though I doubt you'll need to submit anywhere near that number.  All be one of them should be the requisite .c files. The ONE different one should be a "bash" script. The bash script could be just a simple list of linux commands. For example
 
 ```bash
