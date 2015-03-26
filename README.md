@@ -29,7 +29,7 @@ To add some fun each client should probabilistically (using a random number gene
 **This IS important.** Follow these directions or you're likely to get a zero for this assignment. You can submit up to 20 files, though I doubt you'll need to submit anywhere near that number.  All be one of them should be the requisite .c files. The ONE different one should be a "bash" script. The bash script could be just a simple list of linux commands. For example
 
 ```bash
-gcc -o server serrver.c
+gcc -o server server.c
 gcc -o client client.c
 ./server 12345
 ./client cherios 12345
