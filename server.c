@@ -110,9 +110,11 @@ int main(int argc, char const *argv[])
 
   memset((void *) &serverAddress, '\0', sizeof(serverAddress));
   // get the address from the first argument of the command line
+  serverAddress.sun_family = AF_UNIX;
   strcpy(serverAddress.sun_path, argv[1]);
+  printf("The server is running on address: %s\n", serverAddress.sun_path);
 
-  serverLength = strlen(serverAddress.sun_path) + sizeof(serverAddress);
+  serverLength = strlen(serverAddress.sun_path) + sizeof(serverAddress.sun_family);
 
   if (bind(sockfd, (struct sockaddr *) &serverAddress, serverLength) < 0)
   {
@@ -146,6 +148,7 @@ int main(int argc, char const *argv[])
       {
         // handle the error
       }
+
     }
 
     // place logic here
@@ -211,3 +214,9 @@ int buyTicket(int *db, int dbLength, char *errorMsg)
   printf("%s: Limit = %d\n", errorMsg, dbLength);
   return -1;
 }
+
+// int returnTicket(int *db, int dbLength, char *errorMsg)
+// {
+//   int i;
+//   for (i=0; i < dbLength)
+// }
