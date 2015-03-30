@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
     if (newsockfd < 0) { error("ERROR on accepting"); }
 
     memset((void *) buffer, '\0', 1025);
-    returnStatus = read(newsockfd, buffer, sizeof(buffer)); /////////////////
+    returnStatus = read(newsockfd, buffer, sizeof(buffer)); // receive command
     printf("debug: buffer = %s\n", buffer);
 
 
@@ -87,11 +87,15 @@ int main(int argc, char const *argv[])
       if (returnStatus < 0)
       {
         sendMessage("error", newsockfd);
+        read(sockfd, buffer, sizeof(buffer)); // expect "waiting"
         sendMessage("Tickets sold out! Sorry!", newsockfd);
       }
       else
       {
         sendMessage("no error", newsockfd);
+
+        read(sockfd, buffer, sizeof(buffer)); // expect "waiting"
+
         memset((void *) buffer, '\0', 1025);
         sprintf(buffer, "%d", returnStatus);
         printf("debug: sending ticket %s\n", buffer);
@@ -103,9 +107,10 @@ int main(int argc, char const *argv[])
 
     if (strcmp(buffer, "cancel") == 0)
     {
-
+      sendMessage("waiting", newsockfd); // send "waiting" to client
       printf("The client is returning a ticket...\n");
-      read(newsockfd, buffer, sizeof(buffer));
+
+      read(newsockfd, buffer, sizeof(buffer)); // recieve ticket from client
       printf("debug: buffer = %s\n", buffer);
       ticket = atoi(buffer);
       foundTicket = 0;

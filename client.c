@@ -64,6 +64,9 @@ int main(int argc, char const *argv[])
       // read for error
       n = read(sockfd, buffer, sizeof(buffer));
       printf("debug: buffer = %s\n", buffer);
+
+      sendMessage("waiting", sockfd); // send waiting
+
       if (strcmp(buffer, "error") == 0)
       {
         // read error message
@@ -83,18 +86,20 @@ int main(int argc, char const *argv[])
         printf("debug: converted ticket string %s to integer %d\n", buffer, ticket);
       }
     }
-    else if (strcmp(buffer, "cancel") == 0 || strcmp(buffer, "cancel-1"))
+    else if (strcmp(buffer, "cancel") == 0)
     {
       // send "cancel" to server
-      n = write(sockfd, "cancel", 6);
-      memset((void *) buffer, '\0', 256);
-      sprintf(buffer, "%d", ticket);
+      n = write(sockfd, "cancel", 6); // send command
+      
 
       // this part blocks the io
-      n = read(sockfd, buffer, sizeof(buffer));
       memset((void *) buffer, '\0', 256);
+      n = read(sockfd, buffer, sizeof(buffer)); // expect "waiting"
+      
 
       // send ticket number to server
+      memset((void *) buffer, '\0', 256);
+      sprintf(buffer, "%d", ticket);
       n = write(sockfd, buffer, sizeof(buffer));
       memset((void *) buffer, '\0', 256);
 
