@@ -8,7 +8,6 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include <netinet/in.h>
 
 #ifndef SERVER_H   /* Include guard */
 #define SERVER_H

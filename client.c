@@ -5,43 +5,34 @@ int main(int argc, char const *argv[])
   
   
   int n;
-  int port;
   int sockfd;
 
   int ticket = -1;
 
-  struct sockaddr_in serverAddress;
-  struct hostent *server;
+  socklen_t serverLength;
 
+  struct sockaddr_un serverAddress;
+  
   char buffer[BUFFER_SIZE];
 
-  if (argc < 3)
+  if (argc < 2)
   {
-    fprintf(stderr, "Usage %s hostname port\n", argv[0]);
+    fprintf(stderr, "Usage %s path\n", argv[0]);
     exit(0);
   }
-
-  port = atoi(argv[2]);
 
   int isConnected = 1;
   while(isConnected)
   {
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (sockfd < 0) { error("ERROR on opening socket"); }
-
-    server = gethostbyname(argv[1]);
-
-    if (server == NULL)
-    {
-      fprintf(stderr, "ERROR no such host\n");
-      exit(0);
-    }
 
     memset((void *) &serverAddress, '\0', sizeof(serverAddress));
-    serverAddress.sin_family = AF_INET;
-    memcpy((void *) server->h_addr, (void *) &serverAddress.sin_addr.s_addr, server->h_length);
-    serverAddress.sin_port = htons(port);
+    serverAddress.sun_family = AF_UNIX;
+    strcpy(serverAddress.sun_path, argv[1]);
+    serverLength = strlen(serverAddress.sun_path) + sizeof(serverAddress.sun_family);
+
+    sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
+
+    if (sockfd < 0) { error("ERROR on opening socket"); }
 
     if (connect(sockfd, (struct sockaddr *) &serverAddress, sizeof(serverAddress)) < 0)
     {
@@ -106,6 +97,8 @@ int main(int argc, char const *argv[])
       // read error statement from server
       n = read(sockfd, buffer, sizeof(buffer));
       printf("debug: buffer = %s\n", buffer);
+
+      sendMessage("waiting", sockfd);
       // handle "error" or "no error"
       if (strcmp(buffer, "error") == 0)
       {

@@ -7,18 +7,17 @@ int main(int argc, char const *argv[])
   int foundTicket;
 
   int returnStatus; // return status
-  int port;
   int sockfd;
   int newsockfd;
 
   int numClients;
   char buffer[1025];
 
-  socklen_t serverLength;
   socklen_t clientLength;
+  socklen_t serverLength;
 
-  struct sockaddr_in clientAddress;
-  struct sockaddr_in serverAddress;
+  struct sockaddr_un clientAddress;
+  struct sockaddr_un serverAddress;
 
   int ticketDatabase[MAX_TICKETS];
   initDatabase(ticketDatabase, MAX_TICKETS);
@@ -34,22 +33,16 @@ int main(int argc, char const *argv[])
   printf("Enter the # of clients allowed: ");
   scanf("%d", &numClients);
 
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
 
   if (sockfd < 0) { error("ERROR on creating socket"); }
 
   memset((void *) &serverAddress, '\0', sizeof(serverAddress));
-  port = atoi(argv[1]);
 
   // get the address from the first argument of the command line
-  serverAddress.sin_family = AF_INET;
-  serverAddress.sin_addr.s_addr = INADDR_ANY;
-  serverAddress.sin_port = htons(port);
-
-  printf("The server is running on address %d ", serverAddress.sin_addr.s_addr);
-  printf("port %d\n", port);
-
-  serverLength = sizeof(serverAddress);
+  serverAddress.sun_family = AF_UNIX;
+  strcpy(serverAddress.sun_path, argv[1]);
+  serverLength = strlen(serverAddress.sun_path) + sizeof(serverAddress.sun_family);
 
   if (bind(sockfd, (struct sockaddr *) &serverAddress, serverLength) < 0)
   {
@@ -61,7 +54,7 @@ int main(int argc, char const *argv[])
   while(numClients > 0)
   {
     printf("\nWaiting for a client...\n");
-    listen(sockfd, 5);
+    listen(sockfd, 1);
 
     clientLength = sizeof(clientAddress);
     newsockfd = accept(sockfd, (struct sockaddr *) &clientAddress, &clientLength);
@@ -87,6 +80,7 @@ int main(int argc, char const *argv[])
       if (returnStatus < 0)
       {
         sendMessage("error", newsockfd);
+        memset((void *) buffer, '\0', 1025);
         read(sockfd, buffer, sizeof(buffer)); // expect "waiting"
         sendMessage("Tickets sold out! Sorry!", newsockfd);
       }
@@ -94,6 +88,7 @@ int main(int argc, char const *argv[])
       {
         sendMessage("no error", newsockfd);
 
+        memset((void *) buffer, '\0', 1025);
         read(sockfd, buffer, sizeof(buffer)); // expect "waiting"
 
         memset((void *) buffer, '\0', 1025);
@@ -109,7 +104,7 @@ int main(int argc, char const *argv[])
     {
       sendMessage("waiting", newsockfd); // send "waiting" to client
       printf("The client is returning a ticket...\n");
-
+      memset((void *) buffer, '\0', 1025);
       read(newsockfd, buffer, sizeof(buffer)); // recieve ticket from client
       printf("debug: buffer = %s\n", buffer);
       ticket = atoi(buffer);
@@ -126,11 +121,16 @@ int main(int argc, char const *argv[])
       if (foundTicket == 0)
       {
         sendMessage("error", newsockfd);
+        memset((void *) buffer, '\0', 1025);
+        read(sockfd, buffer, sizeof(buffer)); // expect "waiting"
+        memset((void *) buffer, '\0', 1025);
         sendMessage("Could not refund ticket.", newsockfd);
       }
       else
       {
         sendMessage("no error", newsockfd);
+        memset((void *) buffer, '\0', 1025);
+        read(sockfd, buffer, sizeof(buffer)); // expect "waiting"
         sendMessage("Ticket returned and refunded!", newsockfd);
         printf("Ticket refunded!\n");
       }
